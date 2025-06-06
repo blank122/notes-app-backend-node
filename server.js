@@ -1,9 +1,14 @@
 const express = require('express');
 const userRoutes = require('./routes/authentication');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 const app = express();
 const PORT = 3000;
+
+
+// Enable CORS for all routes
+app.use(cors())
 
 app.use(express.json());
 app.use(bodyParser.json()); // To parse JSON body
