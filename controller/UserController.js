@@ -1,7 +1,10 @@
 // controllers/UserController.js
 const bcrypt = require('bcrypt');
+require('dotenv').config();
+const jwt = require('jsonwebtoken');
 
 const User = require('../models/user'); // import your model
+const JWT_SECRET = process.env.JWT_SECRET;
 
 exports.getAllUser = async (req, res) => {
     try {
@@ -22,6 +25,54 @@ exports.getUserById = async (req, res) => {
     } catch (err) {
         console.error('Error fetching User:', err);
         res.status(500).json({ error: 'Failed to fetch User' });
+    }
+};
+
+
+exports.loginUser = async (req, res) => {
+    const { email, password } = req.body;
+
+    // Basic validation
+    if (!email || !password) {
+        return res.status(400).json({ error: 'Email and password are required' });
+    }
+
+    try {
+        const user = await User.findByEmail(email);
+        if (!user) {
+            return res.status(401).json({ error: 'Invalid credentials' });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ error: 'Invalid credentials' });
+        }
+
+        // Generate JWT token
+        const token = jwt.sign(
+            {
+                id: user.id,
+                email: user.email,
+                first_name: user.first_name,
+                last_name: user.last_name
+            },
+            JWT_SECRET,
+            { expiresIn: '1h' }
+        );
+
+        res.status(200).json({
+            message: 'Login successful',
+            token,
+            user: {
+                id: user.id,
+                first_name: user.first_name,
+                last_name: user.last_name,
+                email: user.email
+            }
+        });
+    } catch (err) {
+        console.error('Login error:', err);
+        res.status(500).json({ error: 'Server error during login' });
     }
 };
 
