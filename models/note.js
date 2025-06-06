@@ -1,4 +1,5 @@
-const knex = require('knex')(require('./knexfile')); // Import and initialize Knex
+const knexConfig = require('../knexfile'); // ✅ Correctly load knexfile
+const knex = require('knex')(knexConfig.development); // ✅ Use the correct environment config
 
 class Note {
     constructor(id, title, content, created_at, updated_at, created_by) {
