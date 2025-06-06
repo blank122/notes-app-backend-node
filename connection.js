@@ -1,18 +1,24 @@
-var mysql = require('mysql');
+const mysql = require('mysql2/promise'); // Using the promise API
 
-var con = mysql.createConnection({
+// Create a connection pool (recommended for production)
+const pool = mysql.createPool({
     host: "localhost",
     user: "root",
     password: "",
-    database: 'note_app_nodejs'
+    database: 'note_app_nodejs',
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
 });
 
-con.connect((err) => {
-    if (err) {
+// Test the connection
+pool.getConnection()
+    .then((connection) => {
+        console.log('Connected to MySQL database with mysql2');
+        connection.release(); // Release the connection back to the pool
+    })
+    .catch((err) => {
         console.error('Database connection failed: ' + err.stack);
-        return;
-    }
-    console.log('Connected to MySQL database.');
-});
+    });
 
-module.exports = con;
+module.exports = pool;
