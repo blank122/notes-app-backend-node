@@ -28,19 +28,17 @@ exports.getUserById = async (req, res) => {
 exports.createUser = async (req, res) => {
     const { first_name, last_name, email, password } = req.body;
 
-    // Basic validation
     if (!first_name || !last_name || !email || !password) {
         return res.status(400).json({ error: 'All fields are required' });
     }
 
     try {
-        // Check if user already exists (assuming email is unique)
-        const existingUser = await knex('users').where({ email }).first();
+        // ✅ Use the model method instead of raw knex
+        const existingUser = await User.findByEmail(email);
         if (existingUser) {
             return res.status(409).json({ error: 'Email already in use' });
         }
 
-        // Hash the password before saving
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const userData = {
@@ -53,6 +51,7 @@ exports.createUser = async (req, res) => {
         };
 
         const newUser = await User.create(userData);
+
         res.status(201).json({
             message: 'User registered successfully',
             user: {
@@ -60,7 +59,6 @@ exports.createUser = async (req, res) => {
                 first_name: newUser.first_name,
                 last_name: newUser.last_name,
                 email: newUser.email
-                // Do NOT return the password
             }
         });
     } catch (err) {
@@ -68,6 +66,7 @@ exports.createUser = async (req, res) => {
         res.status(500).json({ error: 'Failed to register user' });
     }
 };
+
 
 exports.updateUser = async (req, res) => {
     const { id } = req.params;
