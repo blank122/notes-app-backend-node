@@ -18,12 +18,12 @@ class Note {
 
     static async find(id) {
         const note = await knex('notes').where('id', id).first();
-        return note ? new Note(note.id, note.title, note.content, note.created_at, note.updated_at, created_by) : null;
+        return note ? new Note(note.id, note.title, note.content, note.created_at, note.updated_at, note.created_by) : null;
     }
 
     static async all() {
         const notes = await knex('notes').select('*');
-        return notes.map(note => new Note(note.id, note.title, note.content, note.created_at, note.updated_at, created_by));
+        return notes.map(note => new Note(note.id, note.title, note.content, note.created_at, note.updated_at, note.created_by));
     }
 
     static async update(id, noteData) {
