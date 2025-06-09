@@ -27,7 +27,7 @@ exports.getNoteById = async (req, res) => {
 exports.createNote = async (req, res) => {
   const { title, content, created_by } = req.body;
 
-  if (!title || !created_by) {
+  if (!title || !content || !created_by) {
     return res.status(400).json({ error: 'Title and created_by are required' });
   }
 

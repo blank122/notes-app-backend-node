@@ -1,5 +1,7 @@
 const express = require('express');
 const userRoutes = require('./routes/authentication');
+const noteRoutes = require('./routes/note');
+
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
@@ -21,6 +23,7 @@ app.get('/api/greet', (req, res) => {
 
 // Mount your user routes
 app.use('/api', userRoutes); // Prefix all user routes with /api
+app.use('/api', noteRoutes); // Prefix all user routes with /api
 
 // Start the server
 app.listen(PORT, () => {

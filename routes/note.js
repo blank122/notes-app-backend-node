@@ -4,7 +4,7 @@ const notesController = require('../controller/NotesController');
 
 // Define endpoints
 router.get('/notes', notesController.getAllNotes);
-router.post('/note', notesController.createNote);
+router.post('/create-note', notesController.createNote);
 router.put('/note:id', notesController.updateNote);
 router.delete('/note:id', notesController.deleteNote);
 
